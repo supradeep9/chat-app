@@ -16,3 +16,7 @@ router.put("/update-profile",protect,updateProfile);
 router.get("/check",protect,(req,res)=>res.status(200).json(req.user))
 
 export default router;
+
+
+
+
