@@ -43,7 +43,7 @@ export const sendMessage=async (req,res)=>{
     if(!image && !text){
         return res.status(400).json({message:"Message content cannot be empty"});
     }
-    if(senderId.equals(receiverId)){
+    if(senderId===String(receiverId)){
         return res.status(400).json({message:"You cannot send message to yourself"});
     }
    const isReceiverExist= await User.findById(receiverId);
