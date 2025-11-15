@@ -27,9 +27,10 @@ if(!emailRegex.test(email)){
     return res.status(400).json({message:"Invalid email format"});
 }
          const user=await User.findOne({email});
-         if(user) return res.status(400).json({message:"Email already exists"});
+        // if(user) return res.status(400).json({message:"Email already exists"});
          
          const salt= await bcrypt.genSalt(10);
+         console.log(password,salt)
          const hashedPassword=await bcrypt.hash(password,salt);
          console.log("reached here 2");
          const newUser=new User({
@@ -51,16 +52,16 @@ if(!emailRegex.test(email)){
             profilePic:newUser.profilePic
         });
 
-        try{
-               await sendWelcomeEmail(savedUser.email,savedUser.fullName,process.env.CLIENT_URL)
-        }catch(error){
-            console.error("failed to sent emaillllll",error)
-        }
+        // try{
+        //        await sendWelcomeEmail(savedUser.email,savedUser.fullName,process.env.CLIENT_URL)
+        // }catch(error){
+        //     console.error("failed to sent emaillllll",error)
+        // }
          }else{
             return res.status(400).json({message:"invalid user data "})
          }
     }catch(error){
-         console.log(  "error in signup controller");
+         console.log(  "error in signup controller",error);
          res.status(500).json({message:"Internal server Error"})
     }
    
