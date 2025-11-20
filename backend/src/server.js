@@ -10,6 +10,7 @@ import cors from "cors"
 
 dotenv.config();
 const app=express();
+app.use(cors({origin:process.env.CLIENT_URL,credentials:true}))
 
 const  __dirname=path.resolve();
 
@@ -19,7 +20,7 @@ const PORT=process.env.PORT || 3000;
 app.use(express.json());
 app.use(cookieParser());
 
-app.use(cors({origin:process.env.CLIENT_URL,credentials:true}))
+
 app.use("/api/auth", authRoutes);
 app.use("/api/messages",messageRouter);
 
@@ -39,3 +40,13 @@ app.listen(PORT,()=>
         console.log("server has started")
     
     });
+    app.use((err, req, res, next) => {
+  if (err.type === "entity.too.large") {
+    return res.status(400).json({
+      success: false,
+      message: "Image size too large. Please upload a smaller file."
+    });
+  }
+
+  next(err);
+});
