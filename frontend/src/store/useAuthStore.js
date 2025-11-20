@@ -1,7 +1,7 @@
 import {create} from 'zustand';
 import axiosInstance from '../lib/axios';
 import { toast } from 'react-hot-toast';
-export const useAuthStore=create((set)=>{
+ const useAuthStore=create((set)=>{
     return {
     authUser: null,
   isCheckingAuth: true,
@@ -37,5 +37,47 @@ export const useAuthStore=create((set)=>{
       set({ isSigningUp: false });
     }
   },
+
+  login:async (data)=>{
+  set({isLoggingIn:true});
+    try{
+const result=await axiosInstance.post("/auth/login",data);
+set({authUser:result.data});
+toast.success("Logged in successfully");
+    }catch(error){
+          toast.error(error.response.data.message);
+          console.log("error while logging in");
+    }finally{
+       set({ isLoggingIn: false });
+    }
+  },
+
+
+
+
+  logout:async ()=>{
+    
+    try{
+    await axiosInstance.post("/auth/logout");
+     set({ authUser: null });
+    toast.success("Loged out succesfully");
+    }catch(error){
+     toast.error("Error logging out");
+     console.log("error while logging out ");
+    }
+  },
+  updateProfile:async(data)=>{
+    try{
+      const res=  await axiosInstance.put("/auth/update-profile",data);
+         set({ authUser: res.data });
+        toast.success("image uploaded sucessfully");
+    }catch(error){
+      toast.error(error.response?.data?.message);
+      console.log("error in updating image",error)
+    }
+  }
+
+ 
     }
 })
+export default useAuthStore;  
