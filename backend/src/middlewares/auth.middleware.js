@@ -11,7 +11,7 @@ try{
     if(!token) {
         return res.status(400).json({message:"Inavlaid Credentials"});
     }
-console.log(process?.env?.SECRET);
+
     const decoded=jwt.verify(token,process.env.SECRET);
 
     if(!decoded){
