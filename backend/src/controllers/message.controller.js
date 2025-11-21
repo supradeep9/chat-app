@@ -1,6 +1,7 @@
 import Message from "../models/Message.js";
 import User from "../models/user.js";
  import cloudinary from "../lib/cloudinary.js"
+import { getReceiverSocketId, io } from "../lib/socket.js";
 export const getAllContacts=async (req,res)=>{
 
     try{
@@ -20,11 +21,11 @@ export const getMessagesByUserId=async (req,res)=>{
 try {
   const myId=req.user.id;
   const {id:userToChatId }=req.params;  
-  console.log("user to chat id",userToChatId);
-  console.log("my id",myId);
+//   console.log("user to chat id",userToChatId);
+//   console.log("my id",myId);
 
   const messages=await Message.find({$or:[{senderId:myId,receiverId:userToChatId},{senderId:userToChatId,receiverId:myId}]});
-  console.log("messages",messages);
+//   console.log("messages",messages);
   res.status(200).json(messages);
 } catch (error) {
     console.log("Errr in getmessage router",error);
@@ -62,8 +63,15 @@ export const sendMessage=async (req,res)=>{
         text,
         image:imageUrl
     });
-//send message in real-time using scket.io
+
+  
+
     await newMessage.save();
+
+    const receiverSocketId=getReceiverSocketId(receiverId);
+  if(receiverSocketId){
+    io.to(receiverSocketId).emit("newMessage",newMessage)
+  }
     res.status(201).json(newMessage);
     } catch (error) {
         console.log("error in send messagerute",error);
